@@ -5,8 +5,8 @@
 1. **Clone the repo:**
 
    ```bash
-   git clone <your-repo-url>
-   cd <your-repo-folder>
+   git clone git@github.com:AndrewG828/Accounting_Automation_Application_Backend.git
+   cd Accounting_Automation_Application_Backend
 
    ```
 
