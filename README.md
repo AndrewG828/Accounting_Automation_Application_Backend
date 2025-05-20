@@ -19,13 +19,14 @@
    ```
 
 3. **Configure PostgeSQL Database**
+
    Make sure PostgreSQL is installed and running.
 
    Create a database.
 
    Update your database connection string in the code or environment variables.
 
-4. **Run the app:**
+5. **Run the app:**
 
    For development (auto-restart on changes):
 
