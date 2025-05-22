@@ -14,8 +14,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       email: {
-        type: DataTypes.String(100),
+        type: DataTypes.STRING(100),
         unique: true,
+        allowNull: true,
+      },
+      hashedPassword: {
+        type: DataTypes.STRING(255),
         allowNull: false,
       },
     },

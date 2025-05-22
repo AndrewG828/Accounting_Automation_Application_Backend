@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/AndrewG828/Accounting_Automation_Application_Backend#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "corss": "^2.8.5",
     "dotenv": "^16.5.0",
