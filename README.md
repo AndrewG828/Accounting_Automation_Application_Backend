@@ -5,8 +5,8 @@
 1. **Clone the repo:**
 
    ```bash
-   git clone <your-repo-url>
-   cd <your-repo-folder>
+   git clone git@github.com:AndrewG828/Accounting_Automation_Application_Backend.git
+   cd Accounting_Automation_Application_Backend
 
    ```
 
@@ -19,13 +19,14 @@
    ```
 
 3. **Configure PostgeSQL Database**
+
    Make sure PostgreSQL is installed and running.
 
    Create a database.
 
    Update your database connection string in the code or environment variables.
 
-4. **Run the app:**
+5. **Run the app:**
 
    For development (auto-restart on changes):
 
