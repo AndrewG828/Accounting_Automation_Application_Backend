@@ -1,22 +1,24 @@
 module.exports = (sequelize, DataTypes) => {
   return sequelize.define(
-    'User',
+    'BankRecord',
     {
-      userId: {
+      bankRecordId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        primaryKey: true,
         autoIncrement: true,
+        primaryKey: true,
       },
-      username: {
-        type: DataTypes.STRING(50),
+      clientId: {
+        type: DataTypes.INTEGER,
         unique: true,
         allowNull: false,
       },
-      email: {
-        type: DataTypes.String(100),
-        unique: true,
+      csvData: {
+        type: DataTypes.TEXT,
         allowNull: false,
+      },
+      sortCsvData: {
+        type: DataTypes.TEXT,
+        allowNull: true,
       },
     },
     {

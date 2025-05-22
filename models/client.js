@@ -1,21 +1,19 @@
 module.exports = (sequelize, DataTypes) => {
   return sequelize.define(
-    'User',
+    'Client',
     {
-      userId: {
+      clientId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         primaryKey: true,
+        allowNull: false,
         autoIncrement: true,
       },
-      username: {
-        type: DataTypes.STRING(50),
-        unique: true,
+      clientName: {
+        type: DataTypes.STRING,
         allowNull: false,
       },
-      email: {
-        type: DataTypes.String(100),
-        unique: true,
+      userId: {
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
     },
