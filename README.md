@@ -13,7 +13,7 @@
 2. **Install Dependencies:**
 
    ```bash
-   npm install express sequelize pg pg-hstore cors dotenv bcrypt
+   npm install express sequelize pg pg-hstore cors dotenv bcrypt multer csv-parser
    npm install --save-dev nodemon
 
    ```
