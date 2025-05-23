@@ -54,11 +54,34 @@ print("Training the SVM model with amount sign included...")
 pipeline.fit(X_train, y_train)
 
 # 9. Evaluate
-y_pred = pipeline.predict(X_test)
-acc = accuracy_score(y_test, y_pred)
-print(f"\nAccuracy: {acc:.4f}")
+# y_pred = pipeline.predict(X_test)
+# acc = accuracy_score(y_test, y_pred)
+# print(f"\nAccuracy: {acc:.4f}")
+# print("\nClassification Report:")
+# print(classification_report(y_test, y_pred))
+
+# 9. Evaluate with confidence threshold
+y_proba = pipeline.predict_proba(X_test)
+y_pred = []
+threshold = 0.9
+
+for probs in y_proba:
+    max_prob = max(probs)
+    if max_prob >= threshold:
+        pred_label = pipeline.classes_[probs.argmax()]
+    else:
+        pred_label = "UNMATCHED"  # or use None, np.nan, etc.
+    y_pred.append(pred_label)
+
+# Optional: convert y_test to string for matching comparison
+y_test_str = y_test.astype(str)
+
+# Evaluate
+print("\nEvaluation with confidence thresholding:")
+print(f"Accuracy (excluding UNMATCHED from correct predictions): {accuracy_score(y_test_str, y_pred):.4f}")
 print("\nClassification Report:")
-print(classification_report(y_test, y_pred))
+print(classification_report(y_test_str, y_pred, labels=[label for label in pipeline.classes_] + ["UNMATCHED"]))
+
 
 # 10. Save the model
 joblib.dump(pipeline, "best_svm_transaction_classifier_with_amount.pkl")
