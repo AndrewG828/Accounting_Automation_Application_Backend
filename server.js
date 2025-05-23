@@ -15,7 +15,7 @@ app.use('/api', routes);
 const PORT = process.env.PORT || 8001;
 
 sequelize
-  .sync({ force: false })
+  .sync({ force: false, alter: true })
   .then(() => {
     console.log('database synced');
     app.listen(PORT, () => {

@@ -1,22 +1,46 @@
+import pandas as pd
+import re
 import joblib
+from sklearn.metrics import accuracy_score, classification_report
 
-model = joblib.load("best_svm_transaction_classifier.pkl")
+# Load trained model
+model = joblib.load("best_svm_transaction_classifier_with_amount.pkl")
 
-# Sample real-world transaction descriptions
-test_descriptions = [
-    "UBER *TRIP OCT03A 800-123-4567",         # should match Accounts Receivable
-    "GGL*YouTube Premium 650-253-0000 CA",    # Dues and Subscriptions
-    "WALMART SUPERCENTER #1234",             # Food Purchases
-    "EXXONMOBIL 12345678 TX",                # Automobile Expense
-    "IPFS CORPORATION PAYMENT 123456",       # Insurance Expense
-    "HOME DEPOT #3827 TOOLS AND SUPPLIES",   # Repairs and Maintenance
-    "ADOBE PHOTOGPHY PLAN ADOBE.COM CA",     # Likely Dues and Subscriptions or new category
-    "Amazon Prime Membership",               # Dues and Subscriptions
-    "Unknown charge TINY MART",              # Could be ambiguous
-]
+# Normalize function
+def normalize_description(desc):
+    desc = desc.lower()
+    desc = re.sub(r'[^a-z\s]', '', desc)
+    desc = re.sub(r'\s+', ' ', desc).strip()
+    return desc
 
-predicted_accounts = model.predict(test_descriptions)
+# Define test cases with expected accounts
+test_data = pd.DataFrame([
+    {"Description": "Merchant Bankcd Deposit", "Amount": 1420.55, "Expected_Account": "Accounts Receivable"},
+    {"Description": "Merchant Bankcd Fee", "Amount": -45.00, "Expected_Account": "Merchant Account Fees"},
+    {"Description": "Stripe Processing Fee", "Amount": -18.23, "Expected_Account": "Merchant Account Fees"},
+    {"Description": "Stripe Transfer", "Amount": 388.50, "Expected_Account": "Accounts Receivable"},
+    {"Description": "ExxonMobil Fuel", "Amount": -75.20, "Expected_Account": "Automobile Expense"},
+    {"Description": "Google Workspace", "Amount": -21.00, "Expected_Account": "Dues and Subscriptions"},
+    {"Description": "Starbucks Coffee", "Amount": -6.89, "Expected_Account": "Meals and Entertainment"},
+    {"Description": "Walmart Grocery", "Amount": -210.30, "Expected_Account": "Food Purchases"},
+    {"Description": "Geico Auto Insurance", "Amount": -345.67, "Expected_Account": "Insurance Expense"},
+    {"Description": "DoorDash Driver Pay", "Amount": 614.90, "Expected_Account": "Accounts Receivable"},
+])
 
-# Show results
-for desc, account in zip(test_descriptions, predicted_accounts):
-    print(f"{desc} → {account}")
+# Preprocessing
+test_data["Normalized_Description"] = test_data["Description"].apply(normalize_description)
+test_data["Amount_Sign"] = test_data["Amount"].apply(lambda x: "positive" if x > 0 else "negative")
+test_data["Combined_Input"] = test_data["Normalized_Description"] + " " + test_data["Amount_Sign"]
+
+# Predict using model
+test_data["Predicted_Account"] = model.predict(test_data["Combined_Input"])
+
+# Accuracy check
+accuracy = accuracy_score(test_data["Expected_Account"], test_data["Predicted_Account"])
+print(f"\n✅ Prediction Accuracy: {accuracy * 100:.2f}%\n")
+print("Detailed Comparison:\n")
+print(test_data[["Description", "Amount", "Expected_Account", "Predicted_Account"]])
+
+# Optional detailed report
+print("\nClassification Report:\n")
+print(classification_report(test_data["Expected_Account"], test_data["Predicted_Account"]))

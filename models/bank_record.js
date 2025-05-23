@@ -13,11 +13,15 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       csvData: {
-        type: DataTypes.TEXT,
+        type: DataTypes.JSONB,
         allowNull: false,
       },
+      uploadedAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
       sortCsvData: {
-        type: DataTypes.TEXT,
+        type: DataTypes.JSONB,
         allowNull: true,
       },
     },

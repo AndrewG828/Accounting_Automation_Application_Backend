@@ -10,10 +10,12 @@ async function registerUser(req, res) {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      res.status(400).json({ error: 'Username and password are require!' });
+      return res
+        .status(400)
+        .json({ error: 'Username and password are require!' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 25);
+    const hashedPassword = await bcrypt.hash(password, 1);
 
     User.create({ username: username, hashedPassword: hashedPassword });
 
@@ -30,7 +32,7 @@ async function logInUser(req, res) {
     const user = await User.findOne({ where: { username: username } });
 
     if (!user) {
-      res.status(404).send('Invalid username or password');
+      return res.status(404).send('Invalid username or password');
     }
 
     const match = await bcrypt.compare(password, user.hashedPassword);
