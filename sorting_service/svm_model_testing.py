@@ -3,72 +3,76 @@ import re
 import joblib
 from sklearn.metrics import accuracy_score, classification_report
 
-# Load trained model
+# === Load trained model ===
 model = joblib.load("best_svm_transaction_classifier_with_amount.pkl")
 
-# Normalize function
+# === Normalize function ===
 def normalize_description(desc):
     desc = desc.lower()
     desc = re.sub(r'[^a-z\s]', '', desc)
     desc = re.sub(r'\s+', ' ', desc).strip()
     return desc
 
-# Define test cases with expected accounts
-test_data = pd.DataFrame([
-    {"Description": "Merchant Bankcd Deposit", "Amount": 1420.55, "Expected_Account": "Accounts Receivable"},
-    {"Description": "Merchant Bankcd Fee", "Amount": -45.00, "Expected_Account": "Merchant Account Fees"},
-    {"Description": "Stripe Processing Fee", "Amount": -18.23, "Expected_Account": "Merchant Account Fees"},
-    {"Description": "Stripe Transfer", "Amount": 388.50, "Expected_Account": "Accounts Receivable"},
-    {"Description": "ExxonMobil Fuel", "Amount": -75.20, "Expected_Account": "Automobile Expense"},
-    {"Description": "Google Workspace", "Amount": -21.00, "Expected_Account": "Dues and Subscriptions"},
-    {"Description": "Starbucks Coffee", "Amount": -6.89, "Expected_Account": "Meals and Entertainment"},
-    {"Description": "Walmart Grocery", "Amount": -210.30, "Expected_Account": "Food Purchases"},
-    {"Description": "Geico Auto Insurance", "Amount": -345.67, "Expected_Account": "Insurance Expense"},
-    {"Description": "DoorDash Driver Pay", "Amount": 614.90, "Expected_Account": "Accounts Receivable"},
-    {"Description": "Paypal payment", "Amount": 1500.21, "Expected_Account": "UNMATCHED"},
-])
+# === Load and clean test data ===
+csv_path = "testing.csv"  # Replace with your file path
+df = pd.read_csv(csv_path)
 
-# Preprocessing
-test_data["Normalized_Description"] = test_data["Description"].apply(normalize_description)
-test_data["Amount_Sign"] = test_data["Amount"].apply(lambda x: "positive" if x > 0 else "negative")
-test_data["Combined_Input"] = test_data["Normalized_Description"] + " " + test_data["Amount_Sign"]
+# Ensure correct columns exist
+assert "Description" in df.columns and "Amount" in df.columns, "CSV must contain 'Description' and 'Amount' columns."
 
-# Predict with probabilities
-X_test = test_data["Combined_Input"]
+# Drop rows with missing data
+df = df.dropna(subset=["Description", "Amount"])
+
+# === Preprocessing ===
+df["Normalized_Description"] = df["Description"].apply(normalize_description)
+df["Amount_Sign"] = df["Amount"].apply(lambda x: "positive" if x > 0 else "negative")
+df["Combined_Input"] = df["Normalized_Description"] + " " + df["Amount_Sign"]
+
+# === Predict with probabilities ===
+X_test = df["Combined_Input"]
 probas = model.predict_proba(X_test)
 labels = model.classes_
 
-# Apply threshold logic (optional)
+# === Apply threshold logic ===
 threshold = 0.9
 predictions = []
 confidences = []
 
-for i, probs in enumerate(probas):
+for probs in probas:
     max_prob = max(probs)
     top_label = labels[probs.argmax()]
+    predictions.append(top_label if max_prob >= threshold else "UNMATCHED")
     confidences.append(max_prob)
-    if max_prob >= threshold:
-        predictions.append(top_label)
-    else:
-        predictions.append("UNMATCHED")
 
-# Add predictions to DataFrame
-test_data["Predicted_Account"] = predictions
-test_data["Confidence"] = confidences
+# === Add predictions to DataFrame ===
+df["Predicted_Account"] = predictions
+df["Confidence"] = confidences
 
-# Print accuracy
-accuracy = accuracy_score(test_data["Expected_Account"], test_data["Predicted_Account"])
-print(f"\n✅ Prediction Accuracy: {accuracy * 100:.2f}%\n")
+# Optional: if Account column is included, show evaluation
+if "Account" in df.columns:
+    # Ensure both 'Account' and 'Predicted_Account' are strings
+    df["Account"] = df["Account"].apply(lambda x: str(x) if pd.notnull(x) else 'UNMATCHED')  # Replace NaN with 'UNMATCHED' and convert to string
+    df["Predicted_Account"] = df["Predicted_Account"].apply(lambda x: str(x) if pd.notnull(x) else 'UNMATCHED')  # Same for predicted accounts
 
-# Print detailed row-by-row comparison
-print("Detailed Predictions:")
-for i, row in test_data.iterrows():
-    print(f"{row['Combined_Input']} → predicted: {row['Predicted_Account']} ({row['Confidence']:.2f}), actual: {row['Expected_Account']}")
+    # Remove any blank strings by replacing them with 'UNMATCHED'
+    df["Account"] = df["Account"].replace("", 'UNMATCHED')
+    df["Account"] = df["Account"].replace("Match", 'UNMATCHED')
+    df["Predicted_Account"] = df["Predicted_Account"].replace("", 'UNMATCHED')
 
-# Print summary DataFrame
-print("\nDataFrame View:\n")
-print(test_data[["Description", "Amount", "Expected_Account", "Predicted_Account", "Confidence"]])
+    # Now calculate accuracy and classification report
+    accuracy = accuracy_score(df["Account"], df["Predicted_Account"])
+    print(f"\n✅ Prediction Accuracy: {accuracy * 100:.2f}%\n")
+    print("\nClassification Report:\n")
+    print(classification_report(df["Account"], df["Predicted_Account"]))
 
-# Classification report
-print("\nClassification Report:\n")
-print(classification_report(test_data["Expected_Account"], test_data["Predicted_Account"]))
+    # Show incorrect predictions (where Account does not match Predicted_Account)
+    incorrect_predictions = df[df["Account"] != df["Predicted_Account"]]
+    
+    # Only print the incorrect predictions
+    if len(incorrect_predictions) > 0:
+        print(f"\n❌ Incorrect Predictions (Total: {len(incorrect_predictions)}):")
+        print(incorrect_predictions[["Description", "Amount", "Account", "Predicted_Account", "Confidence"]])
+
+# Preview predictions (optional, showing a small sample)
+print("\nSummary DataFrame (Top 10 rows):\n")
+print(df[["Description", "Amount", "Predicted_Account", "Confidence"]].head(10))

@@ -4,7 +4,7 @@ import random
 # Updated account categories and description samples
 description_samples_by_account = {
     "Accounts Receivable": [
-        "DoorDash Driver Pay", "Uber Payout", "Stripe Transfer", "Merchant Bankcd", "Grubhub"
+        "DoorDash, INC. DES: DoorDash", "Uber Payout", "Stripe Transfer", "Merchant Bankcd", "Grubhub"
     ],
     "Automobile Expense": [
         "ExxonMobil Fuel", "Shell Oil Gas", "Valvoline Oil Change", "AutoZone Parts",
@@ -15,7 +15,7 @@ description_samples_by_account = {
         "Google Workspace", "YouTube Premium", "Intuit QuickBooks", "Amazon Prime", "Dropbox Plan"
     ],
     "Food Purchases": [
-        "Walmart Grocery", "Whole Foods Market", "Trader Joe's", "Giant Food Store"
+        "Walmart Grocery", "Whole Foods Market", "Trader Joe's", "Giant Food Store", "WISMETTAC ASIAN", "Sysco Corporatio"
     ],
     "Meals and Entertainment": [
         "McDonald's", "Chick-fil-A", "Popeyes Chicken", "Starbucks Coffee", "Judy's Sichuan"
@@ -30,11 +30,11 @@ description_samples_by_account = {
     ],
     "Professional Fees": [
         "LegalZoom Service", "H&R Block Tax Filing", "CPA Tax Prep", "Consulting Fee - Tech",
-        "Bookkeeping Service", "Freelance Developer", "MDG Tax and Accounting Services"
+        "Bookkeeping Service", "Freelance Developer", "MDG Tax and Accounting Services", "Adoluna"
     ],
     "Repairs and Maintenance": [
         "Home Depot Repairs", "Lowe's Maintenance", "Plumber Joe's Service", "Electrician Service",
-        "HVAC Tune-Up", "Contractor Payment", "Handyman Fee"
+        "HVAC Tune-Up", "Contractor Payment", "Handyman Fee", "AUTO CHLOR NVA"
     ],
     "Computer and Internet Expense": [
         "Comcast Internet", "AT&T Fiber", "T-Mobile 5G Plan", "Verizon Hotspot", "Zoom Pro Account",
@@ -42,7 +42,13 @@ description_samples_by_account = {
     ],
     "Merchant Account Fees": [
         "Square Transaction Fee", "Stripe Processing", "Shopify Payout Fee",
-        "Etsy Transaction Fee", "Intuit Merchant Fee", "Adoluna", "Merchant Bankcd"
+        "Etsy Transaction Fee", "Intuit Merchant Fee", "Merchant BankCD"
+    ],
+    "Bank Service Charges": [
+        "Excess Transaction Fee"
+    ],
+    "Other Income": [
+        "Bank of America"
     ]
 }
 
