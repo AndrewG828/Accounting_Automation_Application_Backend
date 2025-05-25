@@ -84,5 +84,5 @@ print(classification_report(y_test_str, y_pred, labels=[label for label in pipel
 
 
 # 10. Save the model
-joblib.dump(pipeline, "best_svm_transaction_classifier_with_amount.pkl")
-print("\nModel saved as 'best_svm_transaction_classifier_with_amount.pkl'")
+joblib.dump(pipeline, "transaction_classifier.pkl")
+print("\nModel saved as 'transaction_classifier.pkl'")

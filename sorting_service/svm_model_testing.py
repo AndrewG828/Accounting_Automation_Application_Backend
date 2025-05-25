@@ -4,7 +4,7 @@ import joblib
 from sklearn.metrics import accuracy_score, classification_report
 
 # === Load trained model ===
-model = joblib.load("best_svm_transaction_classifier_with_amount.pkl")
+model = joblib.load("transaction_classifier.pkl")
 
 # === Normalize function ===
 def normalize_description(desc):
