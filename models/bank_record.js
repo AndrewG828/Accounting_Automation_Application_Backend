@@ -9,7 +9,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       clientId: {
         type: DataTypes.INTEGER,
-        unique: true,
         allowNull: false,
       },
       csvData: {
@@ -20,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
-      sortCsvData: {
+      predictedCsvData: {
         type: DataTypes.JSONB,
         allowNull: true,
       },

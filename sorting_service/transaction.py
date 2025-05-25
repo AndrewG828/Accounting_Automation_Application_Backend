@@ -7,7 +7,7 @@ import re
 app = Flask(__name__)
 
 # Load model and label classes once
-model = joblib.load("../transaction_classifier.pkl")
+model = joblib.load("transaction_classifier.pkl")
 labels = model.classes_
 threshold = 0.9
 
