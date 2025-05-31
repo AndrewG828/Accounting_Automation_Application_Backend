@@ -46,7 +46,8 @@ def preprocess_and_predict(records):
         confidences.append(round(max_prob, 4))
 
     df["Account"] = predictions
-    # df["Confidence"] = confidences
+
+    df = df[df["Account"] != ""]
 
     return df.to_dict(orient="records")
 

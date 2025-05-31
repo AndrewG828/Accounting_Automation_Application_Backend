@@ -99,6 +99,11 @@ router.post('/predict', async (req, res) => {
   }
 });
 
+function sanitizeName(description) {
+  const rawName = (description || 'Imported').split(' ')[0];
+  return rawName.replace(/,/g, '').trim();
+}
+
 function generateIIF(transactions) {
   const lines = [
     '!TRNS\tTRNSTYPE\tDATE\tACCNT\tNAME\tAMOUNT\tMEMO',
@@ -110,7 +115,7 @@ function generateIIF(transactions) {
     const amount = parseFloat(t.Amount);
     const sign = t.Amount_Sign === 'negative' ? -1 : 1;
     const signedAmount = amount * sign;
-    const name = (t.Description || 'Imported').split(' ')[0];
+    const name = sanitizeName(t.Description);
 
     lines.push(
       `TRNS\tGENERALJOURNAL\t${t.Date}\t${t.Account}\t${name}\t${signedAmount.toFixed(2)}\t${t.Description}`,
@@ -148,12 +153,14 @@ router.post('/export-iif', async (req, res) => {
         console.error('Error sending IIF:', err);
         res.status(500).send('Failed to export IIF');
       } else {
-        fs.unlinkSync(tempPath); // cleanup after sending
+        fs.unlink(tempPath, () => {});
       }
     });
   } catch (error) {
     console.error('Export error:', error);
-    res.status(500).json({ message: 'Failed to generate IIF', error });
+    res
+      .status(500)
+      .json({ message: 'Failed to generate IIF', error: error.message });
   }
 });
 // router.post('/export-iif', async (req, res) => {
