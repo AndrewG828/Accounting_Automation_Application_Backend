@@ -125,7 +125,7 @@ function generateIIF(transactions) {
       `SPL\tGENERALJOURNAL\t${t.Date}\tBank\t${name}\t${(-signedAmount).toFixed(2)}\t${t.Description}`,
     );
 
-    lines.push('ENDTRNS');
+    lines.push('!ENDTRNS');
   });
 
   return lines.join('\n');
